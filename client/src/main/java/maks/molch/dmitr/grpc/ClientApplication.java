@@ -3,8 +3,12 @@ package maks.molch.dmitr.grpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-import static maks.molch.dmitr.grpc.GreetingServiceGrpc.*;
-import static maks.molch.dmitr.grpc.GreetingServiceOuterClass.*;
+import java.util.Iterator;
+
+import static maks.molch.dmitr.grpc.GreetingServiceGrpc.GreetingServiceBlockingStub;
+import static maks.molch.dmitr.grpc.GreetingServiceGrpc.newBlockingStub;
+import static maks.molch.dmitr.grpc.GreetingServiceOuterClass.HelloRequest;
+import static maks.molch.dmitr.grpc.GreetingServiceOuterClass.HelloResponse;
 
 public class ClientApplication {
     private static final String host = "localhost";
@@ -19,8 +23,11 @@ public class ClientApplication {
         HelloRequest helloRequest = HelloRequest.newBuilder()
                 .setName("Maks :)")
                 .build();
-        HelloResponse response = stub.greeting(helloRequest);
-        System.out.println(response);
+        Iterator<HelloResponse> responseIterator = stub.greeting(helloRequest);
+        while (responseIterator.hasNext()) {
+            var response = responseIterator.next();
+            System.out.println(response);
+        }
         channel.shutdownNow();
     }
 }
